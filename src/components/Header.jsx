@@ -6,61 +6,69 @@ export default function Header() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: "Home", path: "/" },
+    { name: "Work", path: "/work" },
     { name: "About", path: "/about" },
     { name: "Skills", path: "/skills" },
-    { name: "Projects", path: "/projects" },
-    { name: "Contact", path: "/contact" },
+    { name: "Lab", path: "/lab" }, // For experimental projects
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/5 border-b border-white/10 shadow-sm shadow-blue-900/10">
+    <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-white/5 border-b border-white/10">
       <div className="container mx-auto px-6 py-3">
         <nav className="flex items-center justify-between">
-          {/* Logo/Brand - More subtle elegance */}
+          {/* Logo/Brand - Single initial approach */}
           <Link
             href="/"
-            className="group text-2xl font-bold text-white hover:text-blue-200 transition-all duration-300"
+            className="text-2xl font-bold text-blue-300 hover:text-blue-200 transition-all duration-300"
           >
-            <span className="text-blue-300 group-hover:text-blue-200 transition-all duration-300">
-              Sami
-            </span>
-            <span className="opacity-90 group-hover:opacity-100 transition-all duration-300">
-              Portfolio
-            </span>
+            S.
           </Link>
 
-          {/* Desktop Navigation - Ultra minimal */}
-          <div className="hidden md:flex space-x-5">
+          {/* Desktop Navigation - Minimal with subtle indicators */}
+          <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
-                className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 ${
                   pathname === item.path ?
                     "text-blue-300"
-                  : "text-white/90 hover:text-white"
+                  : "text-white/80 hover:text-white"
                 }`}
               >
-                <span className="relative z-10">{item.name}</span>
+                {item.name}
                 {pathname === item.path && (
-                  <span className="absolute inset-0 bg-white/5 rounded-md"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-300 rounded-full"></span>
                 )}
               </Link>
             ))}
           </div>
 
-          {/* Mobile menu button - Clean lines */}
-          <button className="md:hidden flex flex-col space-y-1.5 group">
-            <span
-              className={`w-6 h-px bg-white/90 transition-all duration-300 ${"group-focus:rotate-45 group-focus:translate-y-1.5"}`}
-            ></span>
-            <span
-              className={`w-6 h-px bg-white/90 transition-all duration-300 ${"group-focus:opacity-0"}`}
-            ></span>
-            <span
-              className={`w-6 h-px bg-white/90 transition-all duration-300 ${"group-focus:-rotate-45 group-focus:-translate-y-1.5"}`}
-            ></span>
+          {/* Mobile menu button - Modern X animation */}
+          <button className="md:hidden group p-2">
+            <div className="relative w-6 h-6">
+              <span
+                className={`absolute top-1/2 left-0 w-full h-px bg-white/90 transform transition-all duration-300 ${
+                  false /* change this based on mobile menu state */ ?
+                    "rotate-45 translate-y-0"
+                  : "-translate-y-1.5"
+                }`}
+              ></span>
+              <span
+                className={`absolute top-1/2 left-0 w-full h-px bg-white/90 transition-all duration-300 ${
+                  false /* change this based on mobile menu state */ ?
+                    "opacity-0"
+                  : "opacity-100"
+                }`}
+              ></span>
+              <span
+                className={`absolute top-1/2 left-0 w-full h-px bg-white/90 transform transition-all duration-300 ${
+                  false /* change this based on mobile menu state */ ?
+                    "-rotate-45 translate-y-0"
+                  : "translate-y-1.5"
+                }`}
+              ></span>
+            </div>
           </button>
         </nav>
       </div>

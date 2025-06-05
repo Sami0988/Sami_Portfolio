@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="relative min-h-screen w-full overflow-auto">
-      <Header />
       <ThreeScene />
       <OverlayUI />
       <ProjectArea />

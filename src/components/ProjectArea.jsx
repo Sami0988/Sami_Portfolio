@@ -6,8 +6,192 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Text, OrbitControls, Stars, Sparkles } from "@react-three/drei";
 import { Suspense } from "react";
 import * as THREE from "three";
+import Image from "next/image";
 
-// Deterministic skill positions based on index
+// Icons (using react-icons)
+import {
+  FaReact,
+  FaNodeJs,
+  FaPython,
+  FaJava,
+  FaGitAlt,
+  FaDocker,
+  FaAws,
+  FaLaravel,
+  FaLayerGroup,
+} from "react-icons/fa";
+import {
+  SiNextdotjs,
+  SiTypescript,
+  SiFlutter,
+  SiPostgresql,
+  SiMongodb,
+  SiFirebase,
+  SiFigma,
+  SiTailwindcss,
+  SiRender,
+  SiNetlify,
+} from "react-icons/si";
+import { DiPhotoshop, DiIllustrator } from "react-icons/di";
+import { TbBrandThreejs, TbBrandFramerMotion } from "react-icons/tb";
+import { RiJavascriptFill } from "react-icons/ri";
+
+// Skill data organized by category
+const skillCategories = [
+  {
+    title: "Technical Skills",
+    skills: [
+      {
+        name: "JavaScript",
+        icon: <RiJavascriptFill />,
+        level: 98,
+        color: "#F7DF1E",
+      },
+      { name: "React", icon: <FaReact />, level: 95, color: "#61DAFB" },
+      { name: "Next.js", icon: <SiNextdotjs />, level: 90, color: "#000000" },
+      {
+        name: "TypeScript",
+        icon: <SiTypescript />,
+        level: 88,
+        color: "#3178C6",
+      },
+      { name: "Node.js", icon: <FaNodeJs />, level: 95, color: "#68A063" },
+      {
+        name: "MERN",
+        icon: <FaLayerGroup />,
+        level: 95,
+        color: "#049EF4",
+      },
+      {
+        name: "Laravel",
+        icon: <FaLaravel />,
+        level: 85,
+        color: "#FF2D20",
+      },
+      {
+        name: "Flutter",
+        icon: <SiFlutter />,
+        level: 80,
+        color: "#02569B",
+      },
+      {
+        name: "TailwindCSS",
+        icon: <SiTailwindcss />,
+        level: 90,
+        color: "#38BDF8",
+      },
+      ,
+    ],
+  },
+  {
+    title: "Software Skills",
+    skills: [
+      { name: "Git", icon: <FaGitAlt />, level: 90, color: "#F05032" },
+      {
+        name: "PostgreSQL",
+        icon: <SiPostgresql />,
+        level: 85,
+        color: "#336791",
+      },
+      { name: "MongoDB", icon: <SiMongodb />, level: 90, color: "#47A248" },
+      { name: "Firebase", icon: <SiFirebase />, level: 91, color: "#FFCA28" },
+
+      {
+        name: "Render",
+        icon: <SiRender />,
+        level: 80,
+        color: "#46E3B7",
+      },
+      {
+        name: "Netlify",
+        icon: <SiNetlify />,
+        level: 85,
+        color: "#00C7B7",
+      },
+    ],
+  },
+  {
+    title: "Creative Skills",
+    skills: [
+      {
+        name: "UI/UX Design",
+        icon: <DiPhotoshop />,
+        level: 67,
+        color: "#31A8FF",
+      },
+
+      { name: "Python", icon: <FaPython />, level: 85, color: "#3776AB" },
+
+      {
+        name: "Figma",
+        icon: <SiFigma />,
+        level: 85,
+        color: "#F24E1E",
+      },
+    ],
+  },
+];
+
+// Progress bar component
+const ProgressBar = ({ level, color }) => {
+  return (
+    <div className="w-full bg-gray-700 rounded-full h-2.5">
+      <motion.div
+        initial={{ width: 0 }}
+        whileInView={{ width: `${level}%` }}
+        transition={{ duration: 1, delay: 0.3 }}
+        viewport={{ once: true }}
+        className="h-2.5 rounded-full"
+        style={{ backgroundColor: color }}
+      />
+    </div>
+  );
+};
+
+// Skill Card Component
+const SkillCard = ({ category }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700/30 hover:border-blue-400/30 transition-all duration-300 h-full"
+    >
+      <h3 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+        {category.title}
+      </h3>
+      <div className="space-y-5">
+        {category.skills.map((skill, index) => (
+          <div key={index} className="group">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center space-x-3">
+                {skill.icon ?
+                  <div className="text-xl" style={{ color: skill.color }}>
+                    {skill.icon}
+                  </div>
+                : <div className="w-5 h-5 flex items-center justify-center">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: skill.color }}
+                    />
+                  </div>
+                }
+                <span className="text-gray-200 group-hover:text-white transition-colors">
+                  {skill.name}
+                </span>
+              </div>
+              <span className="text-gray-400 text-sm">{skill.level}%</span>
+            </div>
+            <ProgressBar level={skill.level} color={skill.color} />
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+// Deterministic skill positions for 3D orbs
 const getSkillPosition = (index, total) => {
   const radius = 5;
   const angle = (index / total) * Math.PI * 2;
@@ -98,9 +282,7 @@ const FloatingSkills = () => {
     { name: "Three.js", color: "#049EF4", level: 85 },
     { name: "Node.js", color: "#68A063", level: 88 },
     { name: "TypeScript", color: "#3178C6", level: 92 },
-    { name: "React Native", color: "#61DAFB", level: 85 },
-    { name: "Flutter", color: "#02569B", level: 80 },
-    { name: "AWS", color: "#FF9900", level: 83 },
+    { name: "JavaScript", color: "#F7DF1E", level: 98 },
   ];
 
   return (
@@ -157,24 +339,6 @@ const ProjectCard = ({ title, description, tags, index }) => {
   );
 };
 
-const SkillCategory = ({ name, skills, delay }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: delay * 0.1 }}
-      viewport={{ once: true }}
-      className="bg-gray-800/20 backdrop-blur-sm p-4 rounded-xl border border-gray-700/30 hover:border-blue-400/30 transition-all duration-300"
-    >
-      <h4 className="text-lg font-semibold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
-        {name}
-      </h4>
-      <p className="text-gray-300 text-sm leading-relaxed">{skills}</p>
-    </motion.div>
-  );
-};
-
-// Deterministic particle positions
 const Particle = ({ index }) => {
   const x = 50 + (index % 10) * 10;
   const y = 10 + Math.floor(index / 10) * 10;
@@ -202,6 +366,15 @@ const Particle = ({ index }) => {
   );
 };
 
+const projects = [
+  {
+    title: "3D Portfolio",
+    description:
+      "An immersive 3D portfolio with interactive elements and smooth animations built with Three.js and React.",
+    tags: ["Three.js", "Nextjs", "Framer Motion"],
+  },
+];
+
 export default function ProjectArea() {
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -215,56 +388,6 @@ export default function ProjectArea() {
     }
   }, [controls, inView]);
 
-  const projects = [
-    {
-      title: "3D Portfolio",
-      description:
-        "An immersive 3D portfolio with interactive elements and smooth animations built with Three.js and React.",
-      tags: ["Three.js", "React", "Framer Motion", "GSAP"],
-    },
-    {
-      title: "E-commerce Platform",
-      description:
-        "Full-stack e-commerce solution with Stripe payment integration, inventory management, and analytics dashboard.",
-      tags: ["Next.js", "Node.js", "MongoDB", "Stripe"],
-    },
-    {
-      title: "Mobile Fitness App",
-      description:
-        "Cross-platform fitness tracking application with AI-powered workout recommendations and progress analytics.",
-      tags: ["React Native", "Firebase", "TensorFlow.js", "Expo"],
-    },
-    {
-      title: "AR Product Viewer",
-      description:
-        "Augmented reality product visualization for e-commerce websites with WebXR and Three.js.",
-      tags: ["Three.js", "AR.js", "WebXR", "Blender"],
-    },
-    {
-      title: "Real-time Dashboard",
-      description:
-        "Data visualization dashboard with real-time updates using WebSockets and custom D3.js charts.",
-      tags: ["D3.js", "WebSockets", "Node.js", "PostgreSQL"],
-    },
-    {
-      title: "AI Content Generator",
-      description:
-        "AI-powered content generation tool with GPT-3.5 integration and custom fine-tuning.",
-      tags: ["OpenAI", "Next.js", "Node.js", "Tailwind CSS"],
-    },
-  ];
-
-  const skillCategories = [
-    { name: "Frontend", skills: "React, Next.js, Three.js, GSAP, Tailwind" },
-    { name: "Backend", skills: "Node.js, Express, Django, Flask, GraphQL" },
-    { name: "Mobile", skills: "React Native, Flutter, Expo, SwiftUI" },
-    { name: "DevOps", skills: "AWS, Docker, Kubernetes, CI/CD Pipelines" },
-    { name: "Databases", skills: "MongoDB, PostgreSQL, Firebase, Redis" },
-    { name: "Design", skills: "Figma, Framer Motion, Adobe Suite, Blender" },
-    { name: "AI/ML", skills: "TensorFlow, OpenAI API, LLMs, Computer Vision" },
-    { name: "Web3", skills: "Ethereum, Solidity, Smart Contracts, Web3.js" },
-  ];
-
   return (
     <motion.section
       ref={ref}
@@ -274,9 +397,9 @@ export default function ProjectArea() {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { duration: 0.8 } },
       }}
-      className="relative min-h-screen bg-gray-900 text-white overflow-hidden ml-5"
+      className="relative min-h-screen bg-gray-900/30 backdrop-blur-md text-white overflow-hidden ml-5"
     >
-      {/* 3D Background - Client-side only */}
+      {/* 3D Background */}
       <div className="absolute inset-0 h-screen w-full pointer-events-none">
         <Canvas camera={{ position: [0, 0, 15], fov: 50 }}>
           <ambientLight intensity={0.5} />
@@ -336,13 +459,6 @@ export default function ProjectArea() {
           </motion.p>
         </motion.div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.title} {...project} index={index} />
-          ))}
-        </div>
-
         {/* Skills Section */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -358,15 +474,37 @@ export default function ProjectArea() {
             transition={{ delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Technical <span className="text-cyan-300">Expertise</span>
+            My <span className="text-cyan-300">Skills</span>
           </motion.h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {skillCategories.map((category, index) => (
-              <SkillCategory
-                key={category.name}
-                {...category}
-                delay={index * 0.1 + 0.3}
-              />
+              <SkillCard key={category.title} category={category} />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Projects Section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mb-20"
+        >
+          <motion.h3
+            className="text-4xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-300"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Featured <span className="text-cyan-300">Projects</span>
+          </motion.h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project, index) => (
+              <ProjectCard key={project.title} {...project} index={index} />
             ))}
           </div>
         </motion.div>
@@ -392,7 +530,7 @@ export default function ProjectArea() {
         </motion.div>
       </div>
 
-      {/* Deterministic floating particles */}
+      {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <Particle key={i} index={i} />
